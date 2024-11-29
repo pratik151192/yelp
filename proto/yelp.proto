@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+package yelp;
+
+message Business {
+    int32 id = 1;
+    string name = 2;
+    string description = 3;
+    string category = 4;
+    string address = 5;
+    double latitude = 6;
+    double longitude = 7;
+    float avg_rating = 8;
+    int32 num_ratings = 9;
+}
+
+message Review {
+    int32 id = 1;
+    int32 user_id = 2;
+    int32 business_id = 3;
+    float rating = 4;
+    string text = 5;
+}
+
+// Search businesses
+message SearchResponse {
+    repeated Business businesses = 1;
+    string next = 2;
+}
+
+// Request message for viewing a business
+message ViewRequest {
+    int32 id = 1; // Business ID
+}
+
+// Response message for viewing a business
+message ViewResponse {
+    Business business = 1;
+}
+
+message SearchRequest {
+    string name = 1;       // Partial or full business name
+    string category = 2;   // Optional: Filter by category
+    int64 limit = 3;       // Max number of results
+    double latitude = 4;   
+    double longitude = 5;
+    string next = 6;
+}
+
+service BusinessService {
+    rpc SearchBusinesses (SearchRequest) returns (SearchResponse);
+    rpc ViewBusiness (ViewRequest) returns (ViewResponse);
+}
+
+message GetReviewsRequest {
+    int32 business_id = 1;
+    int32 user_id = 2; // optional
+    string next = 3;
+}
+
+message GetReviewsResponse {
+    repeated Review reviews = 1;
+    string next = 2;
+}
+
+message PostReviewRequest {
+    int32 user_id = 1;
+    int32 business_id = 2;
+    float rating = 3;
+    string text = 4;
+}
+
+message PostReviewResponse {}
+
+service ReviewService {
+    rpc GetReviews (GetReviewsRequest) returns (GetReviewsResponse);
+    rpc PostReview (PostReviewRequest) returns (PostReviewResponse);
+}
